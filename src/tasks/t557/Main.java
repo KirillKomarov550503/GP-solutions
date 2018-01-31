@@ -30,8 +30,14 @@ public class Main {
             int row = 0;
             int column = 0;
             int i = 0;
+            int amount = 0;
+            int pointer = 0;
             while ((line = reader.readLine()) != null) {
+                if (line.length() == 0) {
+                    pointer++;
+                }
                 if (count == 0) {
+                    amount = Integer.parseInt(line.split(" ")[0]);
                     matrixSize = Integer.parseInt(line.split(" ")[1]);
                     matrix1 = new int[matrixSize][matrixSize];
                     for (int j = 0; j < matrixSize; j++)
@@ -54,18 +60,43 @@ public class Main {
                         i++;
                     } else {
                         i = 0;
-                        multiplication(0, matrixSize);
+                        if (pointer == amount) {
+                            penultimateMulti(row);
+                        } else
+                            multiplication(0, matrixSize);
+
                     }
                 }
+
                 count++;
             }
-            multiplication(0, matrixSize);
+
             Files.write(Paths.get(dir + "output.txt")
-                    , Integer.toString(matrix1[row][column]).getBytes());
+                    , Integer.toString(lastMulti(row, column)).getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+    private static int lastMulti(int row, int column) {
+        int temp = 0;
+        for (int i = 0; i < matrixSize; i++)
+            temp += matrix1[row][i] * matrix2[i][column];
+        return (temp >= p) ? temp % p : temp;
+    }
+
+    private static void penultimateMulti(int row) {
+        result = new int[matrixSize][matrixSize];
+        for (int j = 0; j < matrixSize; j++) {
+            int temp = 0;
+            for (int k = 0; k < matrixSize; k++)
+                temp += matrix1[row][k] * matrix2[k][j];
+            result[row][j] = (temp >= p) ? temp % p : temp;
+        }
+        matrix1 = result;
+    }
+
 
     private static void multiplication(int startBorder, int finishBorder) {
         int temp;
